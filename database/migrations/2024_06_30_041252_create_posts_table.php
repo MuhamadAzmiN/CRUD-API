@@ -18,6 +18,7 @@ return new class extends Migration
             $table->unsignedBigInteger('author');
             $table->text('news_content');
             $table->foreign('author')->references("id")->on('users');
+            $table->softDeletes();
 
         });
     }

@@ -15,6 +15,7 @@ class PostController extends Controller
     {
         $posts = Post::all();
 //        return response()->json(['data' => $posts]);
+
         return PostDetailResource::collection($posts->loadMissing('writer:id,username'));
     }
 
@@ -41,6 +42,28 @@ class PostController extends Controller
 
         $request["author"] = Auth::user()->id;
         $post = Post::create($request->all());
+
+        return new PostDetailResource($post->loadMissing('writer:id,username'));
+    }
+
+    public function update(Request $request, $id)
+    {
+        $validateData = $request->validate([
+            "title" => "required|max:244",
+            "news_content" => "required"
+        ]);
+
+        $post = Post::findOrFail($id);
+        $post->update($request->all());
+
+        return new PostDetailResource($post->loadMissing('writer:id,username'));
+
+    }
+
+    public  function destroy($id)
+    {
+        $post = Post::findOrFail($id);
+        $post->delete();
 
         return new PostDetailResource($post->loadMissing('writer:id,username'));
     }
